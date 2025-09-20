@@ -42,6 +42,7 @@ public class ChessMove {
         return promotionPiece;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
