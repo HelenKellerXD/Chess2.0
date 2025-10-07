@@ -6,7 +6,6 @@ public class GameClient {
     //make sure to have a leave function to leave the game
     private final ServerFacade server;
     private final Repl repl;
-    private State state = State.PRELOGIN;
 
 
     /*** list all the possible PostLogin actions
