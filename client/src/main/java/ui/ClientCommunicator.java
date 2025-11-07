@@ -20,11 +20,9 @@ public class ClientCommunicator {
     }
 
     public <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws Exception {
-        try {
-            URL url = (new URI(serverURL + path)).toURL();
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();
-            http.setRequestMethod(method);
-            http.setDoOutput(true);
+        URL url = (new URI(serverURL + path)).toURL();
+        HttpURLConnection http = (HttpURLConnection) url.openConnection();
+        http.setRequestMethod(method);
 
             writeBody(request, http);
             if (authToken != null){
