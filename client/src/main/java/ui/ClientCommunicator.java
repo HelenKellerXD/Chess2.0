@@ -24,16 +24,22 @@ public class ClientCommunicator {
         HttpURLConnection http = (HttpURLConnection) url.openConnection();
         http.setRequestMethod(method);
 
-            writeBody(request, http);
-            if (authToken != null){
-                http.addRequestProperty("Authorization", authToken);
-            }
-            http.connect();
-            throwIfNotSuccessful(http);
-            return readBody(http, responseClass);
-        } catch (Exception ex) {
-            throw new Exception("Make request error");
+        if (authToken != null) {
+            http.addRequestProperty("Authorization", authToken);
         }
+
+        if (request != null) {
+            http.setDoOutput(true);
+            http.addRequestProperty("Content-Type", "application/json");
+            String reqData = gson.toJson(request);
+            try (OutputStream reqBody = http.getOutputStream()) {
+                reqBody.write(reqData.getBytes());
+            }
+        }
+
+        http.connect();
+        throwIfNotSuccessful(http);
+        return readBody(http, responseClass);
     }
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
