@@ -54,7 +54,7 @@ public class Server {
     }
 
 
-    private Object generalError (DataAccessException e, Context ctx){
+    private String generalError (DataAccessException e, Context ctx){
         Gson gson = new Gson();
         if (e.getCause() instanceof java.sql.SQLException){
             ctx.status(500);
@@ -75,7 +75,7 @@ public class Server {
         try {
             username = userService.getUsername(authToken);
         } catch (DataAccessException e) {
-            return ctx.json(generalError(e, ctx));
+            return ctx.result(generalError(e, ctx));
         }
 
 
@@ -85,26 +85,26 @@ public class Server {
         try {
             gameService.joinGame(joinGameRequest);
             ctx.status(200);
-            return ctx.json(gson.toJson(null));
+            return ctx.result(gson.toJson(null));
         } catch (DataAccessException e) {
             if (e.getCause() instanceof java.sql.SQLException){
                 ctx.status(500);
-                return ctx.json(gson.toJson(Map.of("message", "Error: server error")));
+                return ctx.result(gson.toJson(Map.of("message", "Error: server error")));
             }
             // if e = bad join request -> 400, if e = game doesn't exist -> 403
             String error = e.getMessage();
             if (error.equalsIgnoreCase("Error: already taken")){
                 ctx.status(403);
-                return ctx.json(gson.toJson(Map.of("message", error)));
+                return ctx.result(gson.toJson(Map.of("message", error)));
 
             }
             else {
                 ctx.status(400);
-                return ctx.json(gson.toJson(Map.of("message", "Error: bad request")));
+                return ctx.result(gson.toJson(Map.of("message", "Error: bad request")));
             }
         } catch (Exception e){
             ctx.status(500);
-            return ctx.json(gson.toJson(Map.of("message", "Error: server error")));
+            return ctx.result(gson.toJson(Map.of("message", "Error: server error")));
         }
     }
 
@@ -118,7 +118,7 @@ public class Server {
         try {
             userService.validateToken(authToken);
         } catch (DataAccessException e) {
-            return ctx.json(generalError(e, ctx));
+            return ctx.result(generalError(e, ctx));
         }
 
 
@@ -128,19 +128,19 @@ public class Server {
         //check to see if body contains game name
         if(userInfo.gameName() == null){
             ctx.status(400);
-            return ctx.json(gson.toJson(Map.of("message", "Error: bad request")));
+            return ctx.result(gson.toJson(Map.of("message", "Error: bad request")));
         }
 
         try {
             CreateGameResult result = gameService.createGame(userInfo);
             ctx.status(200);
-            return ctx.json(gson.toJson(result));
+            return ctx.result(gson.toJson(result));
 
         } catch (DataAccessException e) {
-            return ctx.json(generalError(e, ctx));
+            return ctx.result(generalError(e, ctx));
         } catch (Exception e){
             ctx.status(500);
-            return ctx.json(gson.toJson(Map.of("message", "Error: server error")));
+            return ctx.result(gson.toJson(Map.of("message", "Error: server error")));
         }
 
     }
@@ -155,7 +155,7 @@ public class Server {
         try {
             userService.validateToken(authToken);
         } catch (DataAccessException e) {
-            return ctx.json(generalError(e, ctx));
+            return ctx.result(generalError(e, ctx));
         }
 
 
@@ -163,13 +163,13 @@ public class Server {
             //list games, return ListGamesResult result, and return code 200
             ListGamesResult result = gameService.listGames();
             ctx.status(200);
-            return  ctx.json(gson.toJson(result));
+            return  ctx.result(gson.toJson(result));
 
         } catch(DataAccessException e){
-            return ctx.json(generalError(e, ctx));
+            return ctx.result(generalError(e, ctx));
         } catch (Exception e){
             ctx.status(500);
-            return ctx.json(gson.toJson(Map.of("message", "Error: server error")));
+            return ctx.result(gson.toJson(Map.of("message", "Error: server error")));
         }
 
     }
@@ -183,13 +183,13 @@ public class Server {
             //logout, and return code 200
             userService.logout(logoutRequest);
             ctx.status(200);
-            return  ctx.json(gson.toJson(null));
+            return  ctx.result(gson.toJson(null));
 
         } catch(DataAccessException e){
-            return ctx.json(generalError(e, ctx));
+            return ctx.result(generalError(e, ctx));
         } catch (Exception e){
             ctx.status(500);
-            return ctx.json(gson.toJson(Map.of("message", "Error: server error")));
+            return ctx.result(gson.toJson(Map.of("message", "Error: server error")));
         }
     }
 
@@ -200,7 +200,7 @@ public class Server {
 
         if(userInfo.username() == null || userInfo.password() == null){
             ctx.status(400);
-            return ctx.json(gson.toJson(Map.of("message", "Error: bad request")));
+            return ctx.result(gson.toJson(Map.of("message", "Error: bad request")));
         }
 
         try{
@@ -208,15 +208,15 @@ public class Server {
             executionResult = userService.login(userInfo);
 
             ctx.status(200);
-            return  ctx.json(gson.toJson(executionResult));
+            return  ctx.result(gson.toJson(executionResult));
 
 
         } catch(DataAccessException e){
             ctx.status(401);
-            return ctx.json(generalError(e, ctx));
+            return ctx.result(generalError(e, ctx));
         } catch (Exception e){
             ctx.status(500);
-            return ctx.json(gson.toJson(Map.of("message", "Error: server error")));
+            return ctx.result(gson.toJson(Map.of("message", "Error: server error")));
         }
     }
 
@@ -228,13 +228,13 @@ public class Server {
 
         } catch (DataAccessException e) {
             ctx.status(500);
-            return ctx.json(gson.toJson(Map.of("message", "Error: server error")));
+            return ctx.result(gson.toJson(Map.of("message", "Error: server error")));
         } catch (Exception e){
             ctx.status(500);
-            return ctx.json(gson.toJson(Map.of("message", "Error: server error")));
+            return ctx.result(gson.toJson(Map.of("message", "Error: server error")));
         }
         ctx.status(200);
-        return  ctx.json(gson.toJson(null));
+        return  ctx.result(gson.toJson(null));
     }
 
 
@@ -245,7 +245,7 @@ public class Server {
         // check to see if all fields were properly entered
         if(userInfo.username() == null || userInfo.password() == null || userInfo.email() == null){
             ctx.status(400);
-            return ctx.json(gson.toJson(Map.of("message", "Error: bad request")));
+            return ctx.result(gson.toJson(Map.of("message", "Error: bad request")));
         }
 
 
@@ -254,20 +254,20 @@ public class Server {
             executionResult = userService.register(userInfo);
 
             ctx.status(200);
-            return  ctx.json(gson.toJson(executionResult));
+            return  ctx.result(gson.toJson(executionResult));
 
 
         } catch(DataAccessException e){
             if (e.getCause() instanceof java.sql.SQLException){
                 ctx.status(500);
-                return ctx.json(gson.toJson(Map.of("message", "Error: server error")));
+                return ctx.result(gson.toJson(Map.of("message", "Error: server error")));
             }
             // if register is not successful, then throw 403 error
             ctx.status(403);
-            return ctx.json(gson.toJson(Map.of("message", "Error: already taken")));
+            return ctx.result(gson.toJson(Map.of("message", "Error: already taken")));
         } catch (Exception e){
             ctx.status(500);
-            return ctx.json(gson.toJson(Map.of("message", "Error: server error")));
+            return ctx.result(gson.toJson(Map.of("message", "Error: server error")));
         }
     }
 
