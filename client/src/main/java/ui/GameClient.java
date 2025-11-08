@@ -5,11 +5,12 @@ import java.util.Arrays;
 public class GameClient {
     private final ServerFacade server;
     private final Repl repl;
+    private final String playerColor; // "WHITE", "BLACK", or null for observer
 
     public GameClient(ServerFacade server, Repl repl, String playerColor) {
         this.server = server;
         this.repl = repl;
-
+        this.playerColor = playerColor;
     }
 
     public String eval(String input) {
