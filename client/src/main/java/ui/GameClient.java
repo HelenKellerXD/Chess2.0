@@ -18,9 +18,11 @@ public class GameClient {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+
             return switch (cmd) {
                 case "help" -> help();
-                case "leave" -> "leave";
+                case "leave" -> leave();
+                case "redraw" -> redraw();
                 default -> help();
             };
         } catch (Exception ex) {
