@@ -32,15 +32,14 @@ public class GameClient {
 
 
 
-
-
-    public String help() {
+    private String help() {
         return """
                 [Options] : [what to type]
-                - Go Back to menu: "leave"
+                - Go back to menu: "leave"
+                - Redraw chess board: "redraw"
                 - Help: "help"
-                
                 """;
+    }
 
     private String leave() {
         return "Leaving game";
