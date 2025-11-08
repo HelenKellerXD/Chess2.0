@@ -154,7 +154,8 @@ public class PostLoginClient {
 
         try {
             server.joinGame(request);
-            return SET_TEXT_COLOR_BLUE + "joined game";
+            this.teamColor = teamColor;
+            return "joined game";
         } catch (Exception e) {
             return SET_TEXT_COLOR_RED + "cannot join game as " + teamColor;
         }
@@ -176,7 +177,8 @@ public class PostLoginClient {
 
         }
         desiredGameID = gameIDs.get(idIndex);
-        return SET_TEXT_COLOR_BLUE + "observing game";
+        this.teamColor = "white";
+        return "observing game";
         }
 
     public String help() {
