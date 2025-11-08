@@ -87,7 +87,7 @@ public class PostLoginClient {
         try {
             gameIDs.clear();
             ListGamesRequest request = new ListGamesRequest(server.getAuthToken());
-            ListGamesResult games = server.listGames(request);
+            ListGamesResult games = server.listGames();
             String result;
             if (games.games().isEmpty()){
                 result = SET_TEXT_COLOR_BLUE + "There are no games currently \n";
