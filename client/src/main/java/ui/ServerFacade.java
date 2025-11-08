@@ -53,11 +53,11 @@ public class ServerFacade {
         this.authToken = null;
 
     }
-    public ListGamesResult listGames(ListGamesRequest request)throws Exception{
+    public ListGamesResult listGames() throws Exception {
         var path = "/game";
-        return clientCommunicator.makeRequest("GET",path, request, ListGamesResult.class, authToken);
-
+        return clientCommunicator.makeRequest("GET", path, null, ListGamesResult.class, authToken);
     }
+
     public CreateGameResult createGame(CreateGameRequest request)throws Exception{
         var path = "/game";
         return clientCommunicator.makeRequest("POST",path, request, CreateGameResult.class, authToken);
