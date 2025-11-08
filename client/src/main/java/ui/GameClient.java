@@ -3,20 +3,10 @@ package ui;
 import java.util.Arrays;
 
 public class GameClient {
-    //make sure to have a leave function to leave the game
     private final ServerFacade server;
     private final Repl repl;
 
-
-    /*** list all the possible PostLogin actions
-     * - help
-     * - logout
-     * - create game
-     * - List Games
-     * - Play Game
-     * - Observe Game
-     */
-    public GameClient(ServerFacade server, Repl repl) {
+    public GameClient(ServerFacade server, Repl repl, String playerColor) {
         this.server = server;
         this.repl = repl;
 
