@@ -42,6 +42,8 @@ public class GameClient {
                 
                 """;
 
+    private String leave() {
+        return "Leaving game";
     }
 
 }
