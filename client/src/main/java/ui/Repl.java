@@ -73,7 +73,7 @@ public class Repl {
                 System.out.print(msg);
             }
             if (result.equalsIgnoreCase("joined game") || result.equalsIgnoreCase("observing game")) {
-                game = new GameClient(server, this);
+                game = new GameClient(server, this, postLogin.getTeamColor());
                 gameLoop(scanner);
 
             }
