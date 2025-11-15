@@ -57,7 +57,7 @@ public class BoardSetUp {
                 strBoard.append(files[i]).append("  ");
             }
         }
-        strBoard.append("\n  ----------------------------------------\n");
+        strBoard.append("\n   ----------------------------------------\n");
 
         for (int i = 0; i < 8; i++) {
             int team = (color.equalsIgnoreCase("white")) ? (8 - i) : (i + 1);
@@ -68,7 +68,7 @@ public class BoardSetUp {
             strBoard.append("| ").append(team).append("\n");
         }
 
-        strBoard.append("  ----------------------------------------\n   ");
+        strBoard.append("   ----------------------------------------\n   ");
         if (color.equalsIgnoreCase("white")) {
             for (String f : files) {
                 strBoard.append(f).append("  ");
