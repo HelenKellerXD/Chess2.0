@@ -85,7 +85,7 @@ public class Repl {
         System.out.print(game.help());
         System.out.print(game.redraw());
         String result = "";
-        while (!result.equalsIgnoreCase("leave")) {
+        while (!result.equalsIgnoreCase("Leaving game")) {
             printPrompt();
             String line = scanner.nextLine();
 
