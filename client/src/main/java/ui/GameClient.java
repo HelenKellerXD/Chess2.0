@@ -32,7 +32,7 @@ public class GameClient {
 
 
 
-    private String help() {
+    public String help() {
         return """
                 [Options] : [what to type]
                 - Go back to menu: "leave"
@@ -45,4 +45,9 @@ public class GameClient {
         return "Leaving game";
     }
 
+    public String redraw() {
+        BoardSetUp boardSetUp = new BoardSetUp();
+        String teamSide = (playerColor != null && playerColor.equalsIgnoreCase("BLACK")) ? "black" : "white";
+        return boardSetUp.redraw(teamSide);
+    }
 }
