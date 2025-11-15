@@ -18,8 +18,8 @@ public class BoardSetUp {
                 {dark, light, dark, light, dark, light, dark, light},
                 {light, dark, light, dark, light, dark, light, dark},
                 {dark, light, dark, light, dark, light, dark, light},
-                {WHITE_PAWN + l, WHITE_PAWN + d, WHITE_PAWN + l, WHITE_PAWN + d, WHITE_PAWN + l, WHITE_PAWN + d, WHITE_PAWN + l, WHITE_PAWN + d},
-                {WHITE_ROOK + d, WHITE_KNIGHT + l, WHITE_BISHOP + d, WHITE_QUEEN + l, WHITE_KING + d, WHITE_BISHOP + l, WHITE_KNIGHT + d, WHITE_BISHOP + l},
+                {WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN},
+                {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING, WHITE_BISHOP, WHITE_KNIGHT, WHITE_BISHOP},
         };
 
         if (color.equalsIgnoreCase("black")) {
@@ -50,9 +50,12 @@ public class BoardSetUp {
 
         strBoard.append("\n   ");
         if (color.equalsIgnoreCase("white")) {
-            for (String f : files) strBoard.append(f).append("  ");
+            for (String f : files) {
+                strBoard.append(f).append("  ");}
         } else {
-            for (int i = files.length - 1; i >= 0; i--) strBoard.append(files[i]).append("  ");
+            for (int i = files.length - 1; i >= 0; i--) {
+                strBoard.append(files[i]).append("  ");
+            }
         }
         strBoard.append("\n  ----------------------------------------\n");
 
@@ -67,9 +70,13 @@ public class BoardSetUp {
 
         strBoard.append("  ----------------------------------------\n   ");
         if (color.equalsIgnoreCase("white")) {
-            for (String f : files) strBoard.append(f).append("  ");
+            for (String f : files) {
+                strBoard.append(f).append("  ");
+            }
         } else {
-            for (int i = files.length - 1; i >= 0; i--) strBoard.append(files[i]).append("  ");
+            for (int i = files.length - 1; i >= 0; i--) {
+                strBoard.append(files[i]).append("  ");
+            }
         }
         strBoard.append("\n");
 
