@@ -3,6 +3,7 @@ package ui;
 import request.LoginRequest;
 import request.RegisterRequest;
 import result.LoginResult;
+import result.RegisterResult;
 
 import java.util.Arrays;
 
@@ -77,11 +78,14 @@ public class PreLoginClient {
         RegisterRequest request = new RegisterRequest(userName, password, email);
 
         try{
-            server.register(request);
-            return SET_TEXT_COLOR_BLUE + "registration successful";
+            RegisterResult reg = server.register(request);
+            this.authToken = reg.authToken();
+            this.userName = reg.username();
+            server.setAuth(this.authToken, this.userName);
+            return "registration successful";
 
         } catch (Exception e) {
-            return SET_TEXT_COLOR_RED + "registration failed: " + e.getMessage();
+            return SET_TEXT_COLOR_RED + "registration failed: ";
         }
     }
 
