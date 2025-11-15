@@ -48,7 +48,8 @@ public class Repl {
                 var msg = e.toString();
                 System.out.print(msg);
             }
-            if (result.equalsIgnoreCase("login successful")) {
+            if (result.equalsIgnoreCase("login successful") ||
+                    result.equalsIgnoreCase("registration successful")) {
                 postLogin = new PostLoginClient(server, this);
                 postLoginLoop(scanner);
 
