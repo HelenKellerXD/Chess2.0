@@ -80,8 +80,9 @@ public class Repl {
         }
     }
 
-    private void gameLoop(Scanner scanner){
+    private void gameLoop(Scanner scanner) {
         System.out.print(game.help());
+        System.out.print(game.redraw());
         String result = "";
         while (!result.equalsIgnoreCase("leave")) {
             printPrompt();
