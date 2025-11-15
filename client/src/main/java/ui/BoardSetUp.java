@@ -8,18 +8,22 @@ public class BoardSetUp {
     public String redraw(String color) {
         String light = SET_BG_COLOR_LIGHT_GREY + EMPTY;
         String dark = SET_BG_COLOR_DARK_GREY + EMPTY;
-        String d = SET_BG_COLOR_LIGHT_GREY;
+        String d = SET_BG_COLOR_DARK_GREY;
         String l = SET_BG_COLOR_LIGHT_GREY;
 
         String[][] board = {
-                {BLACK_ROOK, BLACK_KNIGHT, BLACK_BISHOP, BLACK_QUEEN, BLACK_KING, BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK},
-                {BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN},
+                {l + BLACK_ROOK, d + BLACK_KNIGHT, l + BLACK_BISHOP, d + BLACK_QUEEN,
+                        l + BLACK_KING, d + BLACK_BISHOP, l + BLACK_KNIGHT, d + BLACK_ROOK},
+                {d + BLACK_PAWN, l + BLACK_PAWN, d + BLACK_PAWN, l + BLACK_PAWN,
+                        d + BLACK_PAWN, l + BLACK_PAWN, d + BLACK_PAWN, l + BLACK_PAWN},
                 {light, dark, light, dark, light, dark, light, dark},
                 {dark, light, dark, light, dark, light, dark, light},
                 {light, dark, light, dark, light, dark, light, dark},
                 {dark, light, dark, light, dark, light, dark, light},
-                {WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN},
-                {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING, WHITE_BISHOP, WHITE_KNIGHT, WHITE_BISHOP},
+                {l + WHITE_PAWN, d + WHITE_PAWN, l + WHITE_PAWN, d + WHITE_PAWN, l + WHITE_PAWN,
+                        d + WHITE_PAWN, l + WHITE_PAWN, d+ WHITE_PAWN},
+                {d + WHITE_ROOK, l +WHITE_KNIGHT, d + WHITE_BISHOP, l + WHITE_QUEEN, d + WHITE_KING,
+                        l + WHITE_BISHOP, d + WHITE_KNIGHT, l + WHITE_BISHOP},
         };
 
         if (color.equalsIgnoreCase("black")) {
