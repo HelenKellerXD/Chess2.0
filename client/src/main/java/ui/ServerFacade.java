@@ -88,6 +88,8 @@ public class ServerFacade {
         this.username = username;
     }
 
+    /// UPDATE ----> pass in a game to update the game database
+
     public String getUsername(){
         return username;
     }
