@@ -63,18 +63,64 @@ public class GameClient implements NotificationHandler {
     }
 
     private String makeMove(String[] params) {
-        if (params.length != 1) {
-            return SET_TEXT_COLOR_RED + "please enter piece position as one word (example: show a1)";
+        if (params.length != 2 || params.length != 3) {
+            return SET_TEXT_COLOR_RED + "please enter the start position and end position as two words (example: move a2 a1)";
+
 
         }
-        var pieceMv = params[0];
+        // extract the param and convert from alpha num to piece move type
+        ChessPosition strtPos = covertToPos(params[0]);
+        ChessPosition endPos = covertToPos(params[1]);
+        ChessPiece.PieceType promo = null;
+        if (params.length == 3){
+            promo = covertToPromo(params[2]);
+        }
+
+        ChessMove mv = new ChessMove(strtPos, endPos, promo);
 
         if (server.getAuthToken() == null) {
             return SET_TEXT_COLOR_RED + "unable to authenticate user";
 
         }
+        try {
+            ws.makeMove(mv);
+        } catch (Exception e) {
+            return SET_TEXT_COLOR_RED + "invalid move option" +
+                    "If pawn has reached the end of the map, please also include what upgrade you would like for your pawn" +
+                    "(example: a7 a8 queen) ";
+            ;
+        }
 
     }
+
+    private ChessPiece.PieceType covertToPromo(String piece) {
+        if (piece == null) {
+            return null;
+        }
+
+        switch (piece.trim().toLowerCase()) {
+            case "queen":
+                return ChessPiece.PieceType.QUEEN;
+            case "rook":
+                return ChessPiece.PieceType.ROOK;
+            case "bishop":
+                return ChessPiece.PieceType.BISHOP;
+            case "knight":
+                return ChessPiece.PieceType.KNIGHT;
+            default:
+                return null;  // or throw an exception if invalid
+        }
+    }
+
+    private ChessPosition covertToPos(String pos) {
+        pos = pos.trim().toLowerCase(); // handle "A1" or "a1"
+
+        int x = (pos.charAt(0) - 'a') + 1;
+        int y = Character.getNumericValue(pos.charAt(1));
+
+        return new ChessPosition(x,y);
+    }
+
 
 
     public String help() {
