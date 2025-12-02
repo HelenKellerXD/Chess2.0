@@ -2,6 +2,8 @@ package ui;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import ui.WebSocket.NotificationHandler;
 import ui.WebSocket.WebSocketFacade;
 import websocket.messages.ServerMessage;
