@@ -2,6 +2,9 @@ package ui;
 
 
 
+import ui.WebSocket.NotificationHandler;
+import ui.WebSocket.WebSocketFacade;
+
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
@@ -12,6 +15,7 @@ public class Repl {
     // - after logging in
     // - after joining game
     private final ServerFacade server;
+    private final WebSocketFacade ws;
 
     private PreLoginClient preLogin;
     private PostLoginClient postLogin;
@@ -19,6 +23,7 @@ public class Repl {
 
     private String status;
     private String serverURL;
+    private NotificationHandler notify;
 
 
 
@@ -28,6 +33,7 @@ public class Repl {
         preLogin = new PreLoginClient(server, this);
         postLogin = null;
         game = null;
+        ws = null;
     }
 
     public void run() {
@@ -74,7 +80,8 @@ public class Repl {
                 System.out.print(msg);
             }
             if (result.equalsIgnoreCase("joined game") || result.equalsIgnoreCase("observing game")) {
-                game = new GameClient(server, this, postLogin.getTeamColor());
+                game = new GameClient(server, this, postLogin.getTeamColor(), ws, postLogin.);
+                this.ws = new WebSocketFacade(this.serverURL, game);
                 gameLoop(scanner);
 
             }
