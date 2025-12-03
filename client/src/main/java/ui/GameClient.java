@@ -57,6 +57,11 @@ public class GameClient implements NotificationHandler {
             return SET_TEXT_COLOR_RED + "unable to authenticate user";
 
         }
+        try {
+            ws.highlightMoves(piecePos);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String resign() {
