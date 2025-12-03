@@ -81,7 +81,11 @@ public class Repl {
             }
             if (result.equalsIgnoreCase("joined game") || result.equalsIgnoreCase("observing game")) {
                 game = new GameClient(server, this, postLogin.getTeamColor(), ws, postLogin.);
-                this.ws = new WebSocketFacade(this.serverURL, game);
+                try {
+                    this.ws = new WebSocketFacade(this.serverURL, game);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
                 gameLoop(scanner);
 
             }
