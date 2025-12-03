@@ -65,6 +65,11 @@ public class GameClient implements NotificationHandler {
     }
 
     private String resign() {
+        try {
+            ws.resign();
+        } catch (Exception e) {
+            return SET_TEXT_COLOR_RED + "unable to resign";
+        }
     }
 
     private String makeMove(String[] params) {
