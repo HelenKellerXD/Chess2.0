@@ -38,7 +38,6 @@ public class Repl {
         preLogin = new PreLoginClient(server, this);
         postLogin = null;
         game = null;
-        ws = null;
     }
 
     public void run() {
