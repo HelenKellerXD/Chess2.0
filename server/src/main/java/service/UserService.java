@@ -17,7 +17,7 @@ public class UserService {
         try {
             userDAO = new MySQLUserDAO();
             authDAO = new MySQLAuthDAO();
-            System.out.println("SQL User and Auth database");
+            //System.out.println("SQL User and Auth database");
 
         } catch (DataAccessException e) {
             userDAO = new MemoryUserDAO();
