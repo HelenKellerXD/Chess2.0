@@ -49,7 +49,15 @@ public class Server {
         // Join Game| /game PUT
         .put("/game", this::joinGameHandler)
         // Clear| /db DELETE
-        .delete("/db", this::clearHandler);
+        .delete("/db", this::clearHandler)
+
+        /// websocket cmd
+        // makeMove| /db DELETE
+        .ws("/ws",ws -> {
+            ws.onConnect(webSocketHandler);
+            ws.onMessage(webSocketHandler);
+            ws.onClose(webSocketHandler);
+        });
 
     }
 
