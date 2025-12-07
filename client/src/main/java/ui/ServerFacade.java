@@ -89,6 +89,10 @@ public class ServerFacade {
     }
 
     /// UPDATE ----> pass in a game to update the game database
+    public String updateGame(){
+        return authToken;
+    }
+
 
     public String getUsername(){
         return username;
