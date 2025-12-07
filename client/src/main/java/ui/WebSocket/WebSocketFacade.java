@@ -24,7 +24,7 @@ public class WebSocketFacade extends Endpoint {
     Integer gameID;
     ChessGame chessGame;
 
-    public WebSocketFacade(String url, NotificationHandler notificationHandler) throws Exception {
+    public WebSocketFacade(String url) throws Exception {
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/ws");
@@ -44,6 +44,10 @@ public class WebSocketFacade extends Endpoint {
         } catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new Exception(ex.getMessage());
         }
+    }
+
+    public void send (String msg) throws Exception {
+        this.session.getBasicRemote().sendText(msg);
     }
 
     //Endpoint requires this method, but you don't have to do anything
@@ -69,7 +73,7 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void highlightMoves(ChessPosition) throws Exception {
+    public void highlightMoves(ChessPosition position) throws Exception {
         try {
             var action = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, auth,  gameID);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
