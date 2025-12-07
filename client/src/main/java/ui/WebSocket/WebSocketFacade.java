@@ -1,10 +1,10 @@
 package ui.WebSocket;
 
 
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
-import websocket.*;
 
 
 import jakarta.websocket.*;
@@ -22,6 +22,7 @@ public class WebSocketFacade extends Endpoint {
     NotificationHandler notificationHandler;
     String auth;
     Integer gameID;
+    ChessGame chessGame;
 
     public WebSocketFacade(String url, NotificationHandler notificationHandler) throws Exception {
         try {
