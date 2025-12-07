@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
+import server.websocket.WebSocketHandler;
 import io.javalin.Javalin;
 import request.*;
 import result.CreateGameResult;
@@ -17,13 +18,19 @@ import java.util.Objects;
 // add javalin stuff
 import io.javalin.http.Context;
 
-public class Server {
-    private final Javalin javalin;
+import static io.javalin.apibuilder.ApiBuilder.ws;
 
+public class Server {
 
 
     private UserService userService = new UserService();
     private GameService gameService = new GameService();
+
+    private final Javalin javalin;
+    private final WebSocketHandler webSocketHandler;
+
+
+
 
     public int run(int desiredPort) {
         javalin.start(desiredPort);
@@ -31,6 +38,8 @@ public class Server {
     }
 
     public Server() {
+        webSocketHandler = new WebSocketHandler(gameService, userService);
+
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
         
 
