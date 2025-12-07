@@ -10,6 +10,7 @@ import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
 
+import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
 import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
 
 public class GameClient implements NotificationHandler {
@@ -18,7 +19,7 @@ public class GameClient implements NotificationHandler {
     private final Repl repl;
     private final String playerColor; // "WHITE", "BLACK", or null for observer
 
-    public GameClient(ServerFacade server, Repl repl, String playerColor, WebSocketFacade ws, ChessGame game) {
+    public GameClient(ServerFacade server, Repl repl, String playerColor, WebSocketFacade ws) {
         this.server = server;
         this.repl = repl;
         this.playerColor = playerColor;
@@ -51,7 +52,7 @@ public class GameClient implements NotificationHandler {
             return SET_TEXT_COLOR_RED + "please enter piece position as one word (example: show a1)";
 
         }
-        var piecePos = params[0];
+        var piecePos = convertToPos(params[0]);
 
         if (server.getAuthToken() == null) {
             return SET_TEXT_COLOR_RED + "unable to authenticate user";
@@ -59,9 +60,13 @@ public class GameClient implements NotificationHandler {
         }
         try {
             ws.highlightMoves(piecePos);
+            return SET_TEXT_COLOR_BLUE + "game created\n";
+
+
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return SET_TEXT_COLOR_RED + "Piece Not Found";
         }
+
     }
 
     private String resign() {
@@ -70,20 +75,21 @@ public class GameClient implements NotificationHandler {
         } catch (Exception e) {
             return SET_TEXT_COLOR_RED + "unable to resign";
         }
+        return SET_TEXT_COLOR_BLUE + "game resigned\n";
+
     }
 
     private String makeMove(String[] params) {
         if (params.length != 2 || params.length != 3) {
             return SET_TEXT_COLOR_RED + "please enter the start position and end position as two words (example: move a2 a1)";
 
-
         }
         // extract the param and convert from alpha num to piece move type
-        ChessPosition strtPos = covertToPos(params[0]);
-        ChessPosition endPos = covertToPos(params[1]);
+        ChessPosition strtPos = convertToPos(params[0]);
+        ChessPosition endPos = convertToPos(params[1]);
         ChessPiece.PieceType promo = null;
         if (params.length == 3){
-            promo = covertToPromo(params[2]);
+            promo = convertToPromo(params[2]);
         }
 
         ChessMove mv = new ChessMove(strtPos, endPos, promo);
@@ -94,16 +100,18 @@ public class GameClient implements NotificationHandler {
         }
         try {
             ws.makeMove(mv);
+            return SET_TEXT_COLOR_BLUE + "Move made.\n";
+
         } catch (Exception e) {
             return SET_TEXT_COLOR_RED + "invalid move option" +
                     "If pawn has reached the end of the map, please also include what upgrade you would like for your pawn" +
                     "(example: a7 a8 queen) ";
-            ;
+
         }
 
     }
 
-    private ChessPiece.PieceType covertToPromo(String piece) {
+    private ChessPiece.PieceType convertToPromo(String piece) {
         if (piece == null) {
             return null;
         }
@@ -122,7 +130,7 @@ public class GameClient implements NotificationHandler {
         }
     }
 
-    private ChessPosition covertToPos(String pos) {
+    private ChessPosition convertToPos(String pos) {
         pos = pos.trim().toLowerCase(); // handle "A1" or "a1"
 
         int x = (pos.charAt(0) - 'a') + 1;
@@ -138,7 +146,9 @@ public class GameClient implements NotificationHandler {
                 [Options] : [what to type]
                 - Go back to menu: "leave"
                 - Redraw chess board: "redraw"
+                - Resign from game: "resign"
                 - Help: "help"
+         
                 """;
     }
 
