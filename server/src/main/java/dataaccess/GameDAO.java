@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.GameData;
 
 import java.util.Collection;
@@ -37,6 +38,9 @@ public interface GameDAO {
      */
     void addCaller(int gameID, String playerColor, String userName) throws DataAccessException;
 
+
+    ///  update game
+    void updateGame(int gameID, ChessGame chessGame) throws DataAccessException;
 
     /**
      * clearGames: deletes all games from the database
