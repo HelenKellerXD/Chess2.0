@@ -1,36 +1,107 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPiece;
+
 import static ui.EscapeSequences.*;
 
 public class BoardSetUp {
+    String[][] showBoard;
+    String drk = SET_BG_COLOR_DARK_GREY;
+    String lht = SET_BG_COLOR_LIGHT_GREY;
 
 
-    public String redraw(String color) {
-        String light = SET_BG_COLOR_LIGHT_GREY + EMPTY;
-        String dark = SET_BG_COLOR_DARK_GREY + EMPTY;
-        String d = SET_BG_COLOR_DARK_GREY;
-        String l = SET_BG_COLOR_LIGHT_GREY;
+    public String redraw(String teamColor, ChessBoard board) {
 
-        String[][] board = {
-                {l + BLACK_ROOK, d + BLACK_KNIGHT, l + BLACK_BISHOP, d + BLACK_QUEEN,
-                        l + BLACK_KING, d + BLACK_BISHOP, l + BLACK_KNIGHT, d + BLACK_ROOK},
-                {d + BLACK_PAWN, l + BLACK_PAWN, d + BLACK_PAWN, l + BLACK_PAWN,
-                        d + BLACK_PAWN, l + BLACK_PAWN, d + BLACK_PAWN, l + BLACK_PAWN},
-                {light, dark, light, dark, light, dark, light, dark},
-                {dark, light, dark, light, dark, light, dark, light},
-                {light, dark, light, dark, light, dark, light, dark},
-                {dark, light, dark, light, dark, light, dark, light},
-                {l + WHITE_PAWN, d + WHITE_PAWN, l + WHITE_PAWN, d + WHITE_PAWN, l + WHITE_PAWN,
-                        d + WHITE_PAWN, l + WHITE_PAWN, d+ WHITE_PAWN},
-                {d + WHITE_ROOK, l +WHITE_KNIGHT, d + WHITE_BISHOP, l + WHITE_QUEEN, d + WHITE_KING,
-                        l + WHITE_BISHOP, d + WHITE_KNIGHT, l + WHITE_BISHOP},
-        };
 
-        if (color.equalsIgnoreCase("black")) {
-            blackBoard(board);
+        fancyBoard(board);
+
+
+
+
+        if (teamColor.equalsIgnoreCase("black")) {
+            blackBoard(showBoard);
         }
 
-        return strBoard(board, color);
+        return strBoard(showBoard, teamColor);
+    }
+
+    void fancyBoard(ChessBoard board){
+        for (int row = 8 ; row >= 1; row-- ){
+            for (int col = 1 ; col <= 8; col++ ){
+                ChessPiece q = board.getPiece(row,col);
+                showBoard[row][col] = fancyTile(row,col) + fancyPiece(q);
+
+            }
+            System.out.println("|");
+
+        }
+    }
+
+    /// gets floor of spot position to tile the board
+    private String fancyTile(int row, int col){
+        if ((row+col)%2 == 0){
+            return drk;
+        }
+        else{
+            return lht;
+        }
+    }
+
+
+    private String fancyPiece(ChessPiece chessPiece){
+        if (chessPiece == null){
+            return EMPTY;
+        }
+        else{
+            if (chessPiece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                switch (chessPiece.getPieceType()){
+                    case KING -> {
+                        return WHITE_KING;
+                    }
+                    case QUEEN -> {
+                        return WHITE_QUEEN;
+                    }
+                    case ROOK -> {
+                        return WHITE_ROOK;
+                    }
+                    case BISHOP -> {
+                        return WHITE_BISHOP;
+                    }
+                    case KNIGHT -> {
+                        return WHITE_KNIGHT;
+                    }
+                    case PAWN -> {
+                        return WHITE_PAWN;
+                    }
+                };
+            }
+            else{
+                switch (chessPiece.getPieceType()){
+                    case KING -> {
+                        return BLACK_KING;
+                    }
+                    case QUEEN -> {
+                        return BLACK_QUEEN;
+                    }
+                    case ROOK -> {
+                        return BLACK_ROOK;
+                    }
+                    case BISHOP -> {
+                        return BLACK_BISHOP;
+                    }
+                    case KNIGHT -> {
+                        return BLACK_KNIGHT;
+                    }
+                    case PAWN -> {
+                        return BLACK_PAWN;
+                    }
+                };
+            }
+
+        }
+        return null;
     }
 
     private void blackBoard(String[][] board) {
