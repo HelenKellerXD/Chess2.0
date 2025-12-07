@@ -86,8 +86,61 @@ public class GameService {
         }
     }
 
+    public GameData makeMove(int gameID, ChessMove mv, String playerUsrname) throws DataAccessException, InvalidMoveException {
+        GameData gameData = gameDAO.getGame(gameID);
+        if (gameData == null) {
+            throw new DataAccessException("Error: game not found");
+        }
 
-    public void clear() throws DataAccessException {
+        /// you're checking the player with the gameData in order to
+        /// determine what team the requested player will move as well as if the
+        ///  request was even made by a player
+        ChessGame chessGame = gameData.game();
+
+        ChessGame.TeamColor playerColor;
+        if (playerUsrname.equals(gameData.whiteUsername())) {
+            playerColor = ChessGame.TeamColor.WHITE;
+        } else if (playerUsrname.equals(gameData.blackUsername())) {
+            playerColor = ChessGame.TeamColor.BLACK;
+        } else {
+            throw new DataAccessException("Error: player not in this game");
+        }
+        if(chessGame.getTeamTurn() != playerColor){
+            throw new DataAccessException("Error: not your turn");
+        }
+
+        try {
+            chessGame.makeMove(mv);
+        } catch (InvalidMoveException e){
+            throw new DataAccessException("Error: illegal move");
+        }
+
+        GameData updatedGameData = gameData.changeGame(chessGame);
+
+        gameDAO.updateGame(gameID, updatedGameData.game());
+        return updatedGameData;
+
+    }
+
+    public GameData getGame(int gameID) throws DataAccessException {
+        try{
+            GameData gmData = gameDAO.getGame(gameID);
+            if (gmData == null){
+                throw new DataAccessException("Error: game not found");
+            }
+            return gmData;
+        } catch (DataAccessException ex){
+            throw ex;
+
+        }catch(Exception e){
+            throw new DataAccessException("Error: bad request");
+        }
+    }
+
+
+
+
+        public void clear() throws DataAccessException {
         gameDAO.clear();
     }
 }
