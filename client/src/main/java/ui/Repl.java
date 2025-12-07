@@ -30,6 +30,11 @@ public class Repl {
     public Repl(String serverUrl) {
         this.serverURL = serverUrl;
         this.server = new ServerFacade(serverURL);
+        try {
+            this.ws = new WebSocketFacade(serverUrl);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         preLogin = new PreLoginClient(server, this);
         postLogin = null;
         game = null;
@@ -80,12 +85,7 @@ public class Repl {
                 System.out.print(msg);
             }
             if (result.equalsIgnoreCase("joined game") || result.equalsIgnoreCase("observing game")) {
-                game = new GameClient(server, this, postLogin.getTeamColor(), ws, postLogin.);
-                try {
-                    this.ws = new WebSocketFacade(this.serverURL, game);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                game = new GameClient(server, this, postLogin.getTeamColor(), ws);
                 gameLoop(scanner);
 
             }
