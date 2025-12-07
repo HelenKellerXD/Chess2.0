@@ -1,5 +1,8 @@
 package service;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.MemoryGameDAO;
@@ -18,7 +21,7 @@ public class GameService {
     public GameService() {
         try {
             gameDAO = new MySQLGameDAO();
-            System.out.println("SQL Game database");
+            //System.out.println("SQL Game database");
         } catch (DataAccessException e){
             gameDAO = new MemoryGameDAO();
             System.out.println("local Game database");
