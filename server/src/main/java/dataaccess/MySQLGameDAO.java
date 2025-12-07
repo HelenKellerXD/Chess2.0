@@ -169,6 +169,29 @@ public class MySQLGameDAO implements GameDAO{
     }
 
     @Override
+    public void updateGame(int gameID, ChessGame chessGame) throws DataAccessException {
+        String statement;
+        statement = "UPDATE game SET game=? WHERE gameID=?";
+
+        try (var conn = DatabaseManager.getConnection()) {
+
+            try (var ps = conn.prepareStatement(statement)) {
+                Gson gson = new Gson();
+                String chessBoard = gson.toJson(chessGame);
+
+                ps.setString(1,chessBoard);
+                ps.setInt(2, gameID);
+                ps.executeUpdate();
+
+            }
+        }
+        catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
+
+    @Override
     public void clear() throws DataAccessException {
         var statement = "DELETE FROM game";
 
