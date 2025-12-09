@@ -50,6 +50,8 @@ public interface GameDAO {
 
     public void removeWhiteUser(int gameID) throws DataAccessException;
     public void removeBlackUser(int gameID) throws DataAccessException;
+    public void removeUser(int gameID, String color) throws DataAccessException;
+
 
         /**
          * clearGames: deletes all games from the database.

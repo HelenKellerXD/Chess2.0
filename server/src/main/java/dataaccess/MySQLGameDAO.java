@@ -199,22 +199,22 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public void removeWhiteUser(int gameID) throws DataAccessException {
-        String sql = "UPDATE game SET whiteUsername = NULL WHERE gameID = ?";
-
-        try (var conn = DatabaseManager.getConnection();
-             var ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, gameID);
-            ps.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
+        removeUser(gameID, "white");
     }
 
     @Override
     public void removeBlackUser(int gameID) throws DataAccessException {
-        String sql = "UPDATE game SET blackUsername = NULL WHERE gameID = ?";
+        removeUser(gameID, "black");
+    }
+
+    @Override
+    public void removeUser(int gameID, String color) throws DataAccessException {
+        String sql;
+        if (color.equals("white")) {
+            sql = "UPDATE game SET whiteUsername = NULL WHERE gameID = ?";
+        } else{
+            sql = "UPDATE game SET blackUsername = NULL WHERE gameID = ?";
+        }
 
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(sql)) {
@@ -226,6 +226,7 @@ public class MySQLGameDAO implements GameDAO {
             throw new DataAccessException(e.getMessage());
         }
     }
+
 
     @Override
     public void clear() throws DataAccessException {
