@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import model.GameData;
+import model.GameStatus;
 
 import java.util.Collection;
 
@@ -13,39 +14,45 @@ import java.util.Collection;
  *  - delete
  */
 public interface GameDAO {
+
     /**
      * createGame: Create a new game.
      */
     int createGame(String gameName) throws DataAccessException;
 
-
     /**
      * getGame: Retrieve a specified game with the given game ID.
      */
-
     GameData getGame(int gameID) throws DataAccessException;
 
     /**
-     * glistGames: Retrieve all games.
+     * listGames: Retrieve all games.
      */
-
     Collection<GameData> listGames() throws DataAccessException;
 
     /**
-     * updateGame:
-     * - Updates a chess game. It should replace the chess game string corresponding to a given gameID.
-     * - This is used when players join a game or when a move is made.
+     * addCaller: Assigns a user to WHITE or BLACK in the game.
      */
     void addCaller(int gameID, String playerColor, String userName) throws DataAccessException;
 
-
-    ///  update game
+    /**
+     * updateGame:
+     * Updates the ChessGame object (board state, turn, etc.)
+     */
     void updateGame(int gameID, ChessGame chessGame) throws DataAccessException;
 
     /**
-     * clearGames: deletes all games from the database
+     * NEW: updateGameStatus:
+     * - Updates whether a game is ACTIVE, WHITE_RESIGNED, BLACK_RESIGNED, or FINISHED.
+     * - Used when someone resigns or the game ends.
      */
+    void updateGameStatus(int gameID, GameStatus status) throws DataAccessException;
+
+    public void removeWhiteUser(int gameID) throws DataAccessException;
+    public void removeBlackUser(int gameID) throws DataAccessException;
+
+        /**
+         * clearGames: deletes all games from the database.
+         */
     void clear() throws DataAccessException;
-
-
 }
