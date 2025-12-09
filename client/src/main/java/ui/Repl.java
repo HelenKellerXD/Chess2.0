@@ -2,8 +2,8 @@ package ui;
 
 
 
-import ui.WebSocket.NotificationHandler;
-import ui.WebSocket.WebSocketFacade;
+import ui.webSocketClient.NotificationHandler;
+import ui.webSocketClient.WebSocketFacade;
 
 import java.util.Scanner;
 

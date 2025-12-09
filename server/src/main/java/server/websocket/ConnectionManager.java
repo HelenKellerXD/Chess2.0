@@ -26,7 +26,8 @@ public class ConnectionManager {
 
 
 
-    // figure out how to broadcast and be able to swp between broadcasting to a single user (redraw) or to a whole group (player making move and then redrawing the board)
+    // figure out how to broadcast and be able to swp between broadcasting to a single user
+    // (redraw) or to a whole group (player making move and then redrawing the board)
     public void sendToSession(Session session, ServerMessage msg) throws IOException {
         String json = gson.toJson(msg);
         if (session != null && session.isOpen()) {

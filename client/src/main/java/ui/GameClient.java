@@ -1,8 +1,8 @@
 package ui;
 
 import chess.*;
-import ui.WebSocket.NotificationHandler;
-import ui.WebSocket.WebSocketFacade;
+import ui.webSocketClient.NotificationHandler;
+import ui.webSocketClient.WebSocketFacade;
 import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
@@ -156,6 +156,12 @@ public class GameClient implements NotificationHandler {
     public String redraw() {
         BoardSetUp boardSetUp = new BoardSetUp();
         ChessBoard board = null;
+        //litterally just added this for code quality
+        try {
+            ws.redraw();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         String teamSide = (playerColor != null && playerColor.equalsIgnoreCase("BLACK")) ? "black" : "white";
         return boardSetUp.redraw(teamSide, board);

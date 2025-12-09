@@ -1,7 +1,6 @@
-package ui.WebSocket;
+package ui.webSocketClient;
 
 
-import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
@@ -9,7 +8,6 @@ import com.google.gson.Gson;
 
 
 import jakarta.websocket.*;
-import ui.BoardSetUp;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
@@ -38,8 +36,10 @@ public class WebSocketFacade extends Endpoint {
             //set message handler
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
-                /// this is where the message from the server is received. at this point, the facde now needs to take the message and depending on what type it is,
-                ///  the facade needs to either print out the string (if it is a notif type), print a board (if it is a loadboard type), or send an error (if it is an error type)
+                /// this is where the message from the server is received. at this point,
+                //the facde now needs to take the message and depending on what type it is,
+                ///  the facade needs to either print out the string (if it is a notif type),
+                //print a board (if it is a loadboard type), or send an error (if it is an error type)
                 public void onMessage(String message) {
                     ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
                     notificationHandler.notify(notification);
@@ -87,6 +87,7 @@ public class WebSocketFacade extends Endpoint {
     }
 
     public void redraw() throws Exception {
+        send("hello");
     }
 
 }

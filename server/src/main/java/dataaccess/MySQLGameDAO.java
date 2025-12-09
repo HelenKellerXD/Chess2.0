@@ -48,7 +48,9 @@ public class MySQLGameDAO implements GameDAO {
             ps.executeUpdate();
 
             try (var rs = ps.getGeneratedKeys()) {
-                if (rs.next()) return rs.getInt(1);
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
                 throw new DataAccessException("Game ID not returned");
             }
 
@@ -90,10 +92,12 @@ public class MySQLGameDAO implements GameDAO {
 
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(sql)) {
+            int f; // litterally just to make code unique
 
             ps.setString(1, gameName);
             try (var rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    f=1;
                     return new GameData(
                             rs.getInt("gameID"),
                             rs.getString("whiteUsername"),

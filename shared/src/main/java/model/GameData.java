@@ -13,13 +13,4 @@ public record GameData(int gameID, String whiteUsername, String blackUsername, S
     public GameData changeGame(ChessGame game){
         return new GameData(gameID, whiteUsername,blackUsername,gameName,game, status);
     }
-    public GameData changeStatus(GameStatus newStatus) {
-        return new GameData(gameID, whiteUsername, blackUsername, gameName, game, newStatus);
-    }
-    public GameData removeBlackPlayer(){
-        return new GameData(gameID, whiteUsername,null,gameName,game, status);
-    }
-    public GameData removeWhitePlayer(){
-        return new GameData(gameID, null,blackUsername,gameName,game, status);
-    }
 }
