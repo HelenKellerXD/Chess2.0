@@ -44,7 +44,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     public void handleMessage(WsMessageContext ctx) throws Exception{
         Session session = ctx.session;
         try {
-            UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
+            UserGameCommand command = gson.fromJson(ctx.message(), UserGameCommand.class);
             int gameID = command.getGameID();
             connections.add(gameID, ctx.session);
 
@@ -53,7 +53,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case CONNECT -> connect(ctx, command);
                 case MAKE_MOVE -> {
                     /// command need to be re-deserialized as a MakeMoveCommand since it has the MovePiece field as well
-                    MakeMoveCommand cmd = new Gson().fromJson(ctx.message(), MakeMoveCommand.class);
+                    MakeMoveCommand cmd = gson.fromJson(ctx.message(), MakeMoveCommand.class);
                     mkMv(ctx , cmd);
                 }
                 case LEAVE -> leave(ctx, command);
@@ -61,10 +61,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             }
         } catch (Exception ex) {
             ServerMessage e = new ErrorMessage(ex.getMessage());
-            ctx.send(e.toString());
-            ex.printStackTrace();
+            try {
+                connections.sendToSession(ctx.session, e);
+            } catch (IOException i){}
         }
-        ctx.send("WebSocket response: " + ctx.message());
+        //ctx.send("WebSocket response: " + ctx.message());
     }
 
     @Override
@@ -80,7 +81,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         ChessGame game = data.game();
 
         LoadGameMessage msg = new LoadGameMessage(game);
-        connections.broadcastToSession(session, msg);
+        connections.sendToSession(session, msg);
     }
 
     // Used for a user to make a WebSocket connection as a player or observer.
@@ -98,30 +99,40 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     //Used to request to make a move in a game. (required additional fields
     private void mkMv(WsMessageContext ctx, MakeMoveCommand mv) throws Exception {
         String usrName = userService.getUsername(mv.getAuthToken());
-        GameData nwGameData = gameService.makeMove(mv.getGameID(), mv.mv, usrName);
+        GameData nwGameData = gameService.makeMove(mv.getGameID(), mv.getMove(), usrName);
+
+        // broadcast what move was made
+        String message = usrName + " moved " + mv.getMove().getStartPosition()
+                + " to " + mv.getMove().getEndPosition() + ".";
+        ServerMessage notification = new NotificationMessage(message);
+        connections.broadcastToGame(mv.getGameID(), ctx.session, notification);
 
         // broadcast new board
         LoadGameMessage loadGameMessage = new LoadGameMessage(nwGameData.game());
         connections.broadcastToGame(mv.getGameID(), null, loadGameMessage);
-
-        // broadcast what move was made
-        String message = usrName + "moved " + mv.mv.getStartPosition()
-                + " to " + mv.mv.getEndPosition() + ".";
-        ServerMessage notification = new NotificationMessage(message);
-        connections.broadcastToGame(mv.getGameID(), ctx.session, notification);
     }
 
     private void leave(WsMessageContext ctx, UserGameCommand cmd) throws Exception {
+        String user = userService.getUsername(cmd.getAuthToken());
+
+        gameService.leave(cmd.getGameID(), user);
+
         ServerMessage notification = new NotificationMessage(
-                cmd.getGameID().toString() + " left the game");
+                user + " left the game");
         connections.broadcastToGame(cmd.getGameID(), ctx.session, notification);
         connections.remove(ctx.session);
     }
     private void resign(WsMessageContext ctx, UserGameCommand cmd) throws Exception {
-        ServerMessage notification = new NotificationMessage(cmd.getGameID().toString() + " resigned from the game");
-        connections.broadcastToGame(cmd.getGameID(), ctx.session, notification);
-        connections.remove(ctx.session);
+        String user = userService.getUsername(cmd.getAuthToken());
+
+        // Update DB (throws if illegal)
+        GameData updated = gameService.resign(cmd.getGameID(), user);
+
+        // Notify all others
+        ServerMessage note = new NotificationMessage(user + " resigned from the game");
+        connections.broadcastToGame(cmd.getGameID(), null, note);
 
     }
+
 
 }
