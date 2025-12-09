@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import model.GameData;
+import model.GameStatus;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,7 +21,7 @@ public class MemoryGameDAO implements GameDAO {
         }
 
         ChessGame chessGame = new ChessGame();
-        GameData newGame = new GameData(gameID, null,null, gameName, chessGame);
+        GameData newGame = new GameData(gameID, null,null, gameName, chessGame, GameStatus.ACTIVE);
         gameDB.put(gameID, newGame);
         return gameID;
     }
@@ -54,6 +55,21 @@ public class MemoryGameDAO implements GameDAO {
 
     @Override
     public void updateGame(int gameID, ChessGame chessGame) throws DataAccessException {
+    }
+
+    @Override
+    public void updateGameStatus(int gameID, GameStatus status) throws DataAccessException {
+
+    }
+
+    @Override
+    public void removeWhiteUser(int gameID) throws DataAccessException {
+
+    }
+
+    @Override
+    public void removeBlackUser(int gameID) throws DataAccessException {
+
     }
 
 
