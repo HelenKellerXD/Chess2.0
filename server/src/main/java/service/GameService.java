@@ -8,6 +8,7 @@ import dataaccess.GameDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MySQLGameDAO;
 import model.GameData;
+import model.GameStatus;
 import request.CreateGameRequest;
 import request.JoinGameRequest;
 import result.CreateGameResult;
@@ -21,11 +22,9 @@ public class GameService {
     public GameService() {
         try {
             gameDAO = new MySQLGameDAO();
-            //System.out.println("SQL Game database");
         } catch (DataAccessException e){
             gameDAO = new MemoryGameDAO();
             System.out.println("local Game database");
-
         }
     }
 
@@ -36,75 +35,94 @@ public class GameService {
         int gameID = gameDAO.createGame(createGameRequest.gameName());
         return new CreateGameResult(gameID);
     }
-    public ListGamesResult listGames(Object object) throws DataAccessException {
-        throw new DataAccessException("Error: object passed in to listGames as a parameter");
-    }
 
     public ListGamesResult listGames() throws DataAccessException {
         Collection<GameData> listGamesResult = gameDAO.listGames();
         return new ListGamesResult(listGamesResult);
     }
 
+    public void joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
+        String teamColor = joinGameRequest.playerColor();
+
+
+        // check -> user picked white or black
+        if (teamColor == null ||
+                !(teamColor.equalsIgnoreCase("WHITE") || teamColor.equalsIgnoreCase("BLACK"))) {
+            throw new DataAccessException("Error: bad request");
+        }
+
+        GameData gameData = gameDAO.getGame(joinGameRequest.gameID());
+        // check -> user selected actual game
+        if (gameData == null) {
+            throw new DataAccessException("Error: bad request");
+        }
+
+        //check -> game is active and not closed
+        if (gameData.status() != GameStatus.ACTIVE) {
+            throw new DataAccessException("Error: game is not joinable");
+        }
+
+        /// allowed to join if one of the users
+
+        if (teamColor.equalsIgnoreCase("WHITE") &&
+                joinGameRequest.username().equals(gameData.whiteUsername())) {
+            return;
+        }
+
+        if (teamColor.equalsIgnoreCase("BLACK") &&
+                joinGameRequest.username().equals(gameData.blackUsername())) {
+            return;
+        }
+
+
+
+
+        addCaller(joinGameRequest);
+    }
+
     public void addCaller(JoinGameRequest joinGameRequest) throws DataAccessException {
         String playerColor = joinGameRequest.playerColor();
         GameData gameData = gameDAO.getGame(joinGameRequest.gameID());
+
         if(playerColor.equalsIgnoreCase("WHITE")){
             if (gameData.whiteUsername() == null){
                 gameDAO.addCaller(joinGameRequest.gameID(), playerColor, joinGameRequest.username());
-            }
-            else {
+            } else {
                 throw new DataAccessException("Error: already taken");
             }
-        }
-        else{
-            if (gameData.blackUsername() ==  null){
+        } else {
+            if (gameData.blackUsername() == null){
                 gameDAO.addCaller(joinGameRequest.gameID(), playerColor, joinGameRequest.username());
-            }
-            else {
+            } else {
                 throw new DataAccessException("Error: already taken");
             }
         }
-
     }
 
-    public void joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
-        String teamColor = joinGameRequest.playerColor();
-        if (teamColor == null){
-            throw new DataAccessException("Error: bad request");
-        }
-        if (teamColor.equalsIgnoreCase("WHITE") || teamColor.equalsIgnoreCase("BLACK")){
+    public GameData makeMove(int gameID, ChessMove mv, String playerUsername)
+            throws DataAccessException {
 
-            if(gameDAO.getGame(joinGameRequest.gameID()) != null){
-                addCaller(joinGameRequest);
-            }
-            else{
-                throw new DataAccessException("Error: bad request");
-            }
-        }
-        else{
-            throw new DataAccessException("Error: bad request");
-        }
-    }
-
-    public GameData makeMove(int gameID, ChessMove mv, String playerUsrname) throws DataAccessException, InvalidMoveException {
         GameData gameData = gameDAO.getGame(gameID);
         if (gameData == null) {
             throw new DataAccessException("Error: game not found");
         }
 
-        /// you're checking the player with the gameData in order to
-        /// determine what team the requested player will move as well as if the
-        ///  request was even made by a player
+        // Check -> if game is active
+        if (gameData.status() != GameStatus.ACTIVE) {
+            throw new DataAccessException("Error: game is over");
+        }
+
         ChessGame chessGame = gameData.game();
 
         ChessGame.TeamColor playerColor;
-        if (playerUsrname.equals(gameData.whiteUsername())) {
+        if (playerUsername.equals(gameData.whiteUsername())) {
             playerColor = ChessGame.TeamColor.WHITE;
-        } else if (playerUsrname.equals(gameData.blackUsername())) {
+        } else if (playerUsername.equals(gameData.blackUsername())) {
             playerColor = ChessGame.TeamColor.BLACK;
         } else {
             throw new DataAccessException("Error: player not in this game");
         }
+
         if(chessGame.getTeamTurn() != playerColor){
             throw new DataAccessException("Error: not your turn");
         }
@@ -119,28 +137,58 @@ public class GameService {
 
         gameDAO.updateGame(gameID, updatedGameData.game());
         return updatedGameData;
-
     }
+
+
+
+    public GameData resign(int gameID, String username) throws DataAccessException {
+        GameData cur = gameDAO.getGame(gameID);
+
+        if (cur.status() == GameStatus.OVER) {
+            throw new DataAccessException("Error: game already over");
+        }
+
+        // only players can resign
+        if (!username.equals(cur.whiteUsername()) && !username.equals(cur.blackUsername())) {
+            throw new DataAccessException("Error: observers cannot resign");
+        }
+
+        gameDAO.updateGameStatus(cur.gameID(), GameStatus.OVER);
+        return gameDAO.getGame(gameID);
+    }
+
+    public GameData leave(int gameID, String username) throws DataAccessException {
+        GameData cur = gameDAO.getGame(gameID);
+
+        if (cur.status() == GameStatus.OVER) {
+            throw new DataAccessException("Error: game already over");
+        }
+
+        // only players can resign
+        if (username.equals(cur.whiteUsername())) {
+            gameDAO.removeWhiteUser(gameID);
+
+        }
+        if (username.equals(cur.blackUsername())) {
+            gameDAO.removeBlackUser(gameID);
+        }
+
+        return gameDAO.getGame(gameID);
+    }
+
+
 
     public GameData getGame(int gameID) throws DataAccessException {
-        try{
-            GameData gmData = gameDAO.getGame(gameID);
-            if (gmData == null){
-                throw new DataAccessException("Error: game not found");
-            }
-            return gmData;
-        } catch (DataAccessException ex){
-            throw ex;
-
-        }catch(Exception e){
-            throw new DataAccessException("Error: bad request");
+        GameData gmData = gameDAO.getGame(gameID);
+        if (gmData == null){
+            throw new DataAccessException("Error: game not found");
         }
+        return gmData;
     }
 
-
-
-
-        public void clear() throws DataAccessException {
+    public void clear() throws DataAccessException {
         gameDAO.clear();
     }
+
+
 }
