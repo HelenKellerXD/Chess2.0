@@ -158,6 +158,7 @@ public class GameClient implements NotificationHandler {
 
     public String redraw() {
         BoardSetUp boardSetUp = new BoardSetUp();
+
         String teamSide = (playerColor != null && playerColor.equalsIgnoreCase("BLACK")) ? "black" : "white";
         return boardSetUp.redraw(teamSide);
     }
