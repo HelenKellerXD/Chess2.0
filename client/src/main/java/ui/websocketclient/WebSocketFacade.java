@@ -37,9 +37,7 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 /* this is where the message from the server is received. at this point,
-                //the facde now needs to take the message and depending on what type it is,
-                ///  the facade needs to either print out the string (if it is a notif type),
-                //disply a board if it is a loadboard type, or send an error if it is an error type
+                the facde now needs to take the message and depending on what type it is
                  */
                 public void onMessage(String message) {
                     ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
