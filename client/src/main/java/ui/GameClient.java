@@ -1,8 +1,8 @@
 package ui;
 
 import chess.*;
-import ui.webSocketClient.NotificationHandler;
-import ui.webSocketClient.WebSocketFacade;
+import ui.websocketclient.NotificationHandler;
+import ui.websocketclient.WebSocketFacade;
 import websocket.messages.ServerMessage;
 
 import java.util.Arrays;

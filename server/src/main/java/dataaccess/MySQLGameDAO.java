@@ -92,12 +92,10 @@ public class MySQLGameDAO implements GameDAO {
 
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(sql)) {
-            int f; // litterally just to make code unique
 
             ps.setString(1, gameName);
             try (var rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    f=1;
                     return new GameData(
                             rs.getInt("gameID"),
                             rs.getString("whiteUsername"),
