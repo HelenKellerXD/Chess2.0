@@ -127,6 +127,7 @@ public class DatabaseManager {
               `blackUsername` varchar(26) DEFAULT NULL,
               `gameName` varchar(26) DEFAULT NULL,
               `game` TEXT NOT NULL,
+              `status` varchar(20) NOT NULL DEFAULT 'ACTIVE',
               PRIMARY KEY (`gameID`),
               INDEX(gameName),
               INDEX(blackUsername),
