@@ -319,7 +319,7 @@ public class ServiceTests {
 
         ListGamesRequest listGamesRequest = new ListGamesRequest("authToken");
         //list games
-        Assertions.assertThrows(DataAccessException.class, ()-> gameService.listGames(listGamesRequest),
+        Assertions.assertThrows(DataAccessException.class, ()-> gameService.listGames(),
                 "parameter was used but no error thrown");
 
         ListGamesResult gamesList = Assertions.assertDoesNotThrow(()-> gameService.listGames());
