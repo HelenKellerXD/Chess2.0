@@ -96,11 +96,8 @@ public class MySQLGameDAO implements GameDAO {
             ps.setString(1, gameName);
             try (var rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new GameData(
-                            rs.getInt("gameID"),
-                            rs.getString("whiteUsername"),
-                            rs.getString("blackUsername"),
-                            rs.getString("gameName"),
+                    return getGame( rs.getInt("gameID"),  rs.getString("whiteUsername"),
+                            rs.getString("blackUsername"),  rs.getString("gameName"),
                             gson.fromJson(rs.getString("game"), ChessGame.class),
                             GameStatus.valueOf(rs.getString("status"))
                     );
@@ -113,6 +110,12 @@ public class MySQLGameDAO implements GameDAO {
 
         return null;
     }
+
+    private GameData getGame(int id, String wU, String bU, String gmNm, ChessGame gm, GameStatus st){
+        return new GameData(id, wU, bU, gmNm, gm, st);
+    }
+
+
 
     @Override
     public Collection<GameData> listGames() throws DataAccessException {
