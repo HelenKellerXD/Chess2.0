@@ -1,6 +1,7 @@
 package ui.WebSocket;
 
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
@@ -8,6 +9,7 @@ import com.google.gson.Gson;
 
 
 import jakarta.websocket.*;
+import ui.BoardSetUp;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
@@ -82,6 +84,9 @@ public class WebSocketFacade extends Endpoint {
         } catch (IOException ex) {
             throw new Exception( ex.getMessage());
         }
+    }
+
+    public void redraw() throws Exception {
     }
 
 }
